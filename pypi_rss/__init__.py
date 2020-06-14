@@ -3,7 +3,7 @@ import time
 import xmltodict
 import requests_retry_on_exceptions as requests
 
-def getdatetime(string):
+def get_pubdate(string):
     local_time = time.strptime(string, '%a, %d %b %Y %H:%M:%S GMT')
     local_seconds = time.mktime(local_time)
     utc_timestamp = time.gmtime(local_seconds)
@@ -19,18 +19,28 @@ def get_items(url):
 def get_newest_packages(url=None):
     items = []
     for item in get_items(url if url else "https://pypi.org/rss/packages.xml"):
-        title = item['title']
-        pubdate = getdatetime(item['pubDate'])
-        name = title.split(' ')[0]
-        items.append(dict(title=title,pubdate=pubdate,name=name))
+        items.append(dict(
+            title = item['title'],
+            link = item['link'],
+            guid = item['guid'],
+            description = item.get('description',None),
+            author = item.get('author',None),
+            pubdate = get_pubdate(item['pubDate']),
+            name = item['title'].split(' ')[0]
+        ))
     return items
 
 def get_latest_updates(url=None):
     items = []
     for item in get_items(url if url else "https://pypi.org/rss/updates.xml"):
-        title = item['title']
-        pubdate = getdatetime(item['pubDate'])
-        name, version = title.split(' ')
-        items.append(dict(title=title,pubdate=pubdate,name=name,version=version))
+        items.append(dict(
+            title = item['title'],
+            link = item['link'],
+            description = item.get('description',None),
+            author = item.get('author',None),
+            pubdate = get_pubdate(item['pubDate']),
+            name = item['title'].split(' ')[0],
+            version = item['title'].split(' ')[1]
+        ))
     return items
 
