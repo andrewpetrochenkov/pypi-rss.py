@@ -1,14 +1,7 @@
-from setuptools import setup
+import setuptools
 
-setup(
+setuptools.setup(
     name='pypi-rss',
-    version='2020.6.2',
-    install_requires=[
-        'requests_retry_on_exceptions',
-        'setuptools',
-        'xmltodict',
-    ],
-    packages=[
-        'pypi_rss',
-    ],
+    install_requires=open('requirements.txt').read().splitlines(),
+    packages=setuptools.find_packages()
 )
